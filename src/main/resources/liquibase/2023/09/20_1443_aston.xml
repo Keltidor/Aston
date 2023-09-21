@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="2023-09-20_1443" author="Vyacheslav Korostelev"
+               logicalFilePath="/liquibase/2023/09/20_1443_aston.xml">
+
+        <sql dbms="postgresql" endDelimiter=";">
+            CREATE SCHEMA IF NOT EXISTS aston
+        </sql>
+
+
+        <createTable tableName="bank_accounts" schemaName="aston" remarks="Банковские аккаунты">
+            <column name="id" type="UUID" remarks="ID аккаунта">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_id_bank_accounts"/>
+            </column>
+            <column name="name" type="VARCHAR(255)" remarks="Имя пользователя">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_number" type="UUID" remarks="Номер счета">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pin_code" type="VARCHAR(4)" remarks="PIN код счета">
+                <constraints nullable="false"/>
+            </column>
+            <column name="balance" type="DECIMAL(19,2)" remarks="Баланс счета">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="transactions" schemaName="aston" remarks="Транзакции">
+            <column name="id" type="UUID" remarks="ID транзакции">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_id_transactions"/>
+            </column>
+            <column name="type" type="VARCHAR(8)" remarks="Тип транзакции">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sum" type="DECIMAL(19,2)" remarks="Сумма">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="DATE" remarks="Дата транзакции">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_id" type="UUID" remarks="ID аккаунта, с которого произошла транзакция">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableSchemaName="aston"
+                                 baseTableName="transactions" baseColumnNames="account_id"
+                                 constraintName="fk_transactions_account_id_bank_accounts"
+                                 referencedTableSchemaName="aston"
+                                 referencedTableName="bank_accounts"
+                                 referencedColumnNames="id"
+                                 onUpdate="CASCADE"
+                                 onDelete="NO ACTION"/>
+    </changeSet>
+</databaseChangeLog>
